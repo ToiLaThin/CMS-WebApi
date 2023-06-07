@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\CMS.Post.Api.props" />
+</Project>

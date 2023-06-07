@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "21E9BC9TP2lvoVR4zQyLWTWsNRJ4CVcCiXndQD/tc9Y=",
+  "Source": "CMS.Post.Api",
+  "BasePath": "_content/CMS.Post.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
