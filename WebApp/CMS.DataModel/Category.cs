@@ -1,13 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CMS.DataModel
 {
-    public class Category: BaseDataModel<int>
+    [Table("Category", Schema = "Category")]
+    public class Category : BaseDataModel<int>
     {
-        public string CategoryName { get; set; }
+        public Category()
+        {
+            this.Posts = new List<Post>();
+        }
+
+        public string Name { get; set; }
+
+        public string Description { get; set; }
+
+        public ICollection<Post> Posts { get; set; }
     }
 }

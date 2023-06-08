@@ -1,12 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CMS.DataModel
 {
-    internal class Post
+    public enum StatusEnum
     {
+        Draft,
+        Published,
+        Archived
+    }
+
+    [Table("Post", Schema = "Post")]
+    public partial class Post : BaseDataModel<int>
+    {
+        public string Title { get; set; }
+
+        public string Image { get; set; }
+
+        public string Content { get; set; }
+
+        public StatusEnum Status { get; set; }
+
+        public int CategoryId { get; set; }
+        public Category Category { get; set; }
     }
 }
