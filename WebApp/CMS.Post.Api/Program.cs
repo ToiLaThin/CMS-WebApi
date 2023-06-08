@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using CMS.Post.DataConnect;
+using CMS.Post.Api;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,8 @@ builder.Services.AddDbContext<PostContext>(optionsBuilder =>
     );
 });
 builder.Services.AddControllers();
+
+builder.Services.PostDependencyInjection();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
