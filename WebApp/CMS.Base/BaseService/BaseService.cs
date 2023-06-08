@@ -1,7 +1,7 @@
 ﻿namespace CMS.Base
 {
     //internal -> public 
-    public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class
+    public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class, new()
     {
         protected readonly IUnitOfWork<TEntity> _unitOfWork;
 
@@ -10,66 +10,71 @@
             _unitOfWork = unitOfWork;
         }
 
-        public TEntity Create(TEntity iEntity)
+        public IUnitOfWork<TEntity> UnitOfWork
+        {
+            get => _unitOfWork;
+        }
+
+        public virtual TEntity Create(TEntity iEntity)
         {
             //TODO validate, check before adding, might use helper
-            var result = this._unitOfWork.EntityRepository.Add(iEntity);
+            var result = this._unitOfWork.EntityRepository<BaseRepository<TEntity>>().Add(iEntity);
             return result;
         }
 
-        public IEnumerable<TEntity> Create(IEnumerable<TEntity> entitiesList)
+        public virtual IEnumerable<TEntity> Create(IEnumerable<TEntity> entitiesList)
         {
             //TODO validate, check before adding, might use helper
             var result = entitiesList.ToList();
-            this._unitOfWork.EntityRepository.AddRange(entitiesList);
+            this._unitOfWork.EntityRepository<BaseRepository<TEntity>>().AddRange(entitiesList);
             return result;
 
         }
 
-        public bool Delete(TEntity iEntity)
+        public virtual bool Delete(TEntity iEntity)
         {
             //TODO only if TEntity to be found
-            this._unitOfWork.EntityRepository.Remove(iEntity);
+            this._unitOfWork.EntityRepository<BaseRepository<TEntity>>().Remove(iEntity);
             return true;
         }
 
-        public bool Delete(IEnumerable<TEntity> entitiesList)
+        public virtual bool Delete(IEnumerable<TEntity> entitiesList)
         {
             //TODO only if TEntity to be found
-            this._unitOfWork.EntityRepository.RemoveRange(entitiesList);
+            this._unitOfWork.EntityRepository<BaseRepository<TEntity>>().RemoveRange(entitiesList);
             return true;
         }
 
-        public TEntity FindById<T>(T id)
+        public virtual TEntity FindById<T>(T id)
         {
-            var result = this._unitOfWork.EntityRepository.Get(id);
+            var result = this._unitOfWork.EntityRepository<BaseRepository<TEntity>>().Get(id);
             return result;
         }
 
-        public IEnumerable<TEntity> GetAll()
+        public virtual IEnumerable<TEntity> GetAll()
         {
-            var result = this._unitOfWork.EntityRepository.GetAll();
+            var result = this._unitOfWork.EntityRepository<BaseRepository<TEntity>>().GetAll();
             return this.ToList(result);
         }
 
-        public IEnumerable<TEntity> sortByCreatedDate(IEnumerable<TEntity> iEntity, bool isIncrease)
+        public virtual IEnumerable<TEntity> sortByCreatedDate(IEnumerable<TEntity> iEntity, bool isIncrease)
         {
             throw new NotImplementedException();
         }
 
-        public List<TEntity> ToList(IEnumerable<TEntity> entitiesList)
+        public virtual List<TEntity> ToList(IEnumerable<TEntity> entitiesList)
         {
             return entitiesList.ToList();
         }
 
-        public TEntity Update(TEntity iEntity)
+        public virtual TEntity Update(TEntity iEntity)
         {
             var result = iEntity;
-            this._unitOfWork.EntityRepository.Update(iEntity); 
+            this._unitOfWork.EntityRepository<BaseRepository<TEntity>>().Update(iEntity); 
             return result;
         }
 
-        public bool Validate(TEntity iEntity)
+        public virtual bool Validate(TEntity iEntity)
         {
             throw new NotImplementedException();
         }

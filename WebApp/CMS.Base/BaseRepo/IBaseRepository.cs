@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 namespace CMS.Base
 {
     //internal -> public since other service might use this 
-    public interface IBaseRepository<TEntity> where TEntity : class
+    public interface IBaseRepository<TEntity> where TEntity : class, new()
     {
         TEntity Get<T>(T id);
         IEnumerable<TEntity> GetAll();

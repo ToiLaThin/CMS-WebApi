@@ -4,10 +4,10 @@ using System.Linq.Expressions;
 
 namespace CMS.Base
 {
-    public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
+    public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class, new()
     {
-        internal DbContext _dbContext; 
-        internal DbSet<TEntity> _dbSet;
+        private DbContext _dbContext; 
+        private DbSet<TEntity> _dbSet;
         //public _dbContext _dbContext //TODO Prop?
         //{ 
         //    get { return __dbContext; } 
@@ -27,6 +27,15 @@ namespace CMS.Base
             this._dbContext = dbContext;
             this._dbSet = _dbContext.Set<TEntity>();
         }
+
+        #region Builder Method
+        public void AddDbContextAndDbSet(DbContext dbContext)
+        {
+            this._dbContext = dbContext;
+            this._dbSet = this._dbContext.Set<TEntity>();
+        }
+
+        #endregion
 
         //atomic function
         //virtual for overriding
