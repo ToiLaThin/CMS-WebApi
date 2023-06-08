@@ -4,6 +4,7 @@ using CMS.Base;
 namespace CMS.Post.Api
 {
     using CMS.DataModel;
+    using CMS.Post.Service;
     using System.Runtime.CompilerServices;
 
     [Route("Post")]
@@ -21,6 +22,21 @@ namespace CMS.Post.Api
 
         }
 
+        [HttpGet]
+        [Route("GetCustom")]
+        public Post GetCustom(int id) {
+            IPostService postService = this._service as PostService;
+            var result = postService.GetCustom(id);
+            return result;
+        }
+
+        [HttpPost]
+        [Route("UpdateThenGetAll")]
+        public IEnumerable<Post> UpdateThenGetAll(string newTitle) {
+            IPostService postService = this._service as PostService;
+            var result = postService.UpdateThenGetAll(newTitle);
+            return result;
+        }
         
     }
 }

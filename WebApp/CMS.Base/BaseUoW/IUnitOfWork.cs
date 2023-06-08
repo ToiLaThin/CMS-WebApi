@@ -1,10 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace CMS.Base
+﻿namespace CMS.Base
 {
-    public interface IUnitOfWork<TEntity> : IDisposable where TEntity : class
+    public interface IUnitOfWork<TEntity> : IDisposable where TEntity : class, new()
     {
-        IBaseRepository<TEntity> EntityRepository { get; }
+        IBaseRepository<TEntity> EntityRepository<RepoType>() where RepoType : IBaseRepository<TEntity>, new();
         void SaveChanges();
         void RollBack();
 

@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CMS.Post.Service
+﻿namespace CMS.Post.Service
 {
-    public interface IPostService
+    using CMS.Base;
+    using CMS.DataModel;
+    public interface IPostService: IBaseService<Post>
     {
+        Post GetCustom(int id);
+
+        IEnumerable<Post> UpdateThenGetAll(string title);
     }
 }

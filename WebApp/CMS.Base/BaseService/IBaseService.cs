@@ -1,7 +1,8 @@
 ﻿namespace CMS.Base
 {
-    public interface IBaseService<TEntity> where TEntity : class
+    public interface IBaseService<TEntity> where TEntity : class, new()
     {
+        IUnitOfWork<TEntity> UnitOfWork { get; }
         List<TEntity> ToList(IEnumerable<TEntity> entitiesList);
         IEnumerable<TEntity> sortByCreatedDate(IEnumerable<TEntity> iEntity, bool isIncrease);
         TEntity FindById<T>(T id);
