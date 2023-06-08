@@ -19,4 +19,9 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CMS.Base\CMS.Base.csproj" />
+    <ProjectReference Include="..\CMS.DataModel\CMS.DataModel.csproj" />
+  </ItemGroup>
 </Project>
