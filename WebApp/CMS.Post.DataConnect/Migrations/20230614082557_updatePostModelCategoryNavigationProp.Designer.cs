@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CMS.Post.DataConnect.Migrations
 {
     [DbContext(typeof(PostContext))]
-    [Migration("20230608081528_TestInit")]
-    partial class TestInit
+    [Migration("20230614082557_updatePostModelCategoryNavigationProp")]
+    partial class updatePostModelCategoryNavigationProp
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

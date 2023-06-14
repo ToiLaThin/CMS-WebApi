@@ -8,6 +8,5 @@ namespace CMS.Post.Repo
 
     public interface IPostRepository: IBaseRepository<Post>
     {
-        Post HelloWorld(int id);
     }
 }

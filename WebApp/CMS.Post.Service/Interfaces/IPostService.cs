@@ -2,10 +2,13 @@
 {
     using CMS.Base;
     using CMS.DataModel;
+
     public interface IPostService: IBaseService<Post>
     {
-        Post GetCustom(int id);
+        IEnumerable<Post> GetAllCustom();
 
-        IEnumerable<Post> UpdateThenGetAll(string title);
+        Post AddCustom(Post post);
+        
+
     }
 }

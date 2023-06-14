@@ -8,11 +8,6 @@ namespace CMS.Post.Repo
     {
         public PostRepository() { }
         public PostRepository(DbContext iContext): base(iContext) { }
-
-        public Post HelloWorld(int id)
-        {
-            var result = this.Get(id);
-            return result;
-        }
+        
     }
 }

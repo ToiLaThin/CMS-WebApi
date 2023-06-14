@@ -1,5 +1,5 @@
 ﻿using CMS.Base;
-
+using CMS.Helper;
 namespace CMS.Post.Service
 {
     using CMS.DataModel;
@@ -15,21 +15,29 @@ namespace CMS.Post.Service
                 this._postRepository = postRepository as IPostRepository;
         }
 
-        public IEnumerable<Post> UpdateThenGetAll(string title)
+        public IEnumerable<Post> GetAllCustom()
         {
-            var post = _postRepository.Find(p => p.Id == -1).First();
-            post.Title = title;
-            //now if you save the context, the change will persist
-            //i tested without this below line and do UpdateThenGetAll Controller Action and then GetAll Controller Action => the change not persists
-            this.UnitOfWork.SaveChanges();
-            var result = _postRepository.GetAll();
-            return result;
+            var allPosts = base.GetAll();
+            return allPosts;
         }
 
-        public Post GetCustom(int id)
+        public Post AddCustom(Post post)
         {
-            var result = _postRepository.HelloWorld(id);
-            return result;
+            int? postId = post.Id;
+            Post? postFinded = this._postRepository.Find(p => p.Id == postId).FirstOrDefault();
+            if(postFinded != null)
+            {
+                return null;
+            }
+            else
+            {
+                PostBuilder postBuilder = new PostBuilder();
+                Post postToAdd = postBuilder.SetPostPropsWithOutId(post).Build(); //only for swagger the frontend post won't have id with a value;
+
+                this._postRepository.Add(postToAdd); //must use another post to cut the id since it is auto increase
+                this.UnitOfWork.SaveChanges();
+                return post;
+            }
         }
     }
 }

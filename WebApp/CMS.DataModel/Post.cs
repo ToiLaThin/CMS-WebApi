@@ -21,6 +21,6 @@ namespace CMS.DataModel
         public StatusEnum Status { get; set; }
 
         public int CategoryId { get; set; }
-        public Category Category { get; set; }
+        public Category? Category { get; set; } //nullable de khi post swagger ko phai nhap
     }
 }

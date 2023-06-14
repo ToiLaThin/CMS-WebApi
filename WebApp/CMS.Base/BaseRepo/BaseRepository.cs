@@ -6,8 +6,8 @@ namespace CMS.Base
 {
     public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class, new()
     {
-        private DbContext _dbContext; 
-        private DbSet<TEntity> _dbSet;
+        protected DbContext _dbContext; //will be inherited
+        protected DbSet<TEntity> _dbSet;
         //public _dbContext _dbContext //TODO Prop?
         //{ 
         //    get { return __dbContext; } 

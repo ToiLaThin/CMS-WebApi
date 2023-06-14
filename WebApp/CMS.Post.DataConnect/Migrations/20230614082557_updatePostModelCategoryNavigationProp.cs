@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CMS.Post.DataConnect.Migrations
 {
     /// <inheritdoc />
-    public partial class TestInit : Migration
+    public partial class updatePostModelCategoryNavigationProp : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
