@@ -15,29 +15,19 @@ namespace CMS.Post.Api.Controllers
     {
         public PostController(IBaseService<Post> iPostService) : base(iPostService) { }
 
-        //public ActionResult Delete(int id)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public ActionResult Edit(Post post)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public ActionResult GetOne(int id)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //[HttpGet]
-        //[Route("Get")]
-        //public Post Get(int id)
-        //{
-        //    var result = _service.FindById(id);
-        //    return result;
-
-        //}
+        [HttpGet]
+        [Route("Get")]
+        public ActionResult<Post> GetOne(int id)
+        {
+            IPostService postService = this._service as PostService;
+            Post post = postService.GetCustom(id);
+            if (post != null)
+            {
+                var result = new OkObjectResult(post); //okObjectResult can have not only an status but the object
+                return result;
+            }
+            return new NotFoundResult(); //only status code
+        }
 
 
 
@@ -67,6 +57,32 @@ namespace CMS.Post.Api.Controllers
             }
             else
                 return new ConflictObjectResult(post);
+        }
+
+        [HttpDelete]
+        [Route("Delete")]
+        public ActionResult Delete([FromBody] int id)
+        {
+            IPostService postService = this._service as PostService;
+            var result = postService.DeleteCustom(id);
+            if (result != null)
+            {
+                return new OkObjectResult(result);
+            }
+            return new NotFoundResult();
+        }
+
+        [HttpPut]
+        [Route("Update")]
+        public ActionResult Update([FromBody] Post post)
+        {
+            IPostService postService = this._service as PostService;
+            var result = postService.EditCustom(post);
+            if (result != null)
+            {
+                return new OkObjectResult(result);
+            }
+            return new NotFoundResult();
         }
     }
 }

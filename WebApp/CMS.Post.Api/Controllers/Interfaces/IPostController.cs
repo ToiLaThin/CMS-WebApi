@@ -7,13 +7,13 @@ namespace CMS.Post.Api.Controllers
     {
         ActionResult<IEnumerable<Post>> GetAll();
 
-        //ActionResult GetOne(int id);
+        ActionResult<Post> GetOne(int id);
 
         ActionResult<Post> Add(Post post);
 
-        //ActionResult Delete(int id);
+        ActionResult Delete(int id);
 
-        //ActionResult Edit(Post post);
+        ActionResult Update(Post post);
 
 
     }

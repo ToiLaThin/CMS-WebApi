@@ -4,6 +4,8 @@ namespace CMS.Post.Service
 {
     using CMS.DataModel;
     using CMS.Post.Repo;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
 
     public class PostService: BaseService<Post>, IPostService
     {
@@ -38,6 +40,55 @@ namespace CMS.Post.Service
                 this.UnitOfWork.SaveChanges();
                 return post;
             }
+        }
+
+        public Post? GetCustom(int id)
+        {
+            Post result = this._postRepository.Find(p => p.Id.Equals(id)).FirstOrDefault();
+            return result ?? null;
+        }
+
+        public Post? DeleteCustom(int id)
+        {
+            Post? postToFind = this._postRepository.Get<int>(id);
+            if(postToFind != null)
+            {
+                this._postRepository.Remove(postToFind);
+                try
+                {
+                    this.UnitOfWork.SaveChanges();
+                    return postToFind;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+            }
+            return null;
+        }
+
+        public Post? EditCustom(Post post)
+        {
+            int postId = post.Id;
+            Post? postToFind = this._postRepository.Get<int>(postId);
+            if (postToFind != null)
+            {
+                PostBuilder postBuilder = new PostBuilder(postToFind);
+                Post postToUpdate = postBuilder.SetPostPropsWithOutId(post).Build();
+                //nếu dùng this._postRepository.Update(post); -> lỗi đã có entity được track -> TODO tìm hiểu thêm
+                //dùng post builder với các setter để override lại các prop của postToFind theo post(post là giá trị cần edit)
+                
+                this._postRepository.Update(postToUpdate);
+                try
+                {
+                    this.UnitOfWork.SaveChanges();
+                    return post;
+                }
+                catch (DbUpdateConcurrencyException ex) {
+                    throw new Exception(ex.Message);
+                }
+            }
+            return null;
         }
     }
 }

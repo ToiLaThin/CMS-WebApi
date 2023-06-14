@@ -9,6 +9,11 @@ namespace CMS.Helper
             this._post = new Post() { };
         }
 
+        public PostBuilder(Post post)
+        {
+            this._post = post;
+        }
+
         public PostBuilder SetPostTitle(string postTitle)
         {
             this._post.Title = postTitle;

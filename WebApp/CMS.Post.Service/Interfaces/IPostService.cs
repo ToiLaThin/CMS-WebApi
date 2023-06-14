@@ -8,7 +8,12 @@
         IEnumerable<Post> GetAllCustom();
 
         Post AddCustom(Post post);
-        
 
+        Post? GetCustom(int id);
+
+        Post? DeleteCustom(int id);
+
+        Post? EditCustom(Post post);
+        
     }
 }

@@ -7,8 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Category\" />
-    <Folder Include="Post\" />
+    <Compile Remove="Category\**" />
+    <EmbeddedResource Remove="Category\**" />
+    <None Remove="Category\**" />
   </ItemGroup>
 
   <ItemGroup>
