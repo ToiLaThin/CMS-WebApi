@@ -9,11 +9,11 @@ namespace CMS.Post.Api.Controllers
 
         ActionResult<Post> GetOne(int id);
 
-        ActionResult<Post> Add(Post post);
+        ActionResult<Post> Add(Post post); //the reuturn type must match the frontend, otherwise, the controller won't receive from fe
 
-        ActionResult Delete(int id);
+        ActionResult<Post> Delete(int id);
 
-        ActionResult Update(Post post);
+        ActionResult<Post> Update(Post post);
 
 
     }

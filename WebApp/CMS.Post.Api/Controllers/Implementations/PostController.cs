@@ -61,7 +61,7 @@ namespace CMS.Post.Api.Controllers
 
         [HttpDelete]
         [Route("Delete")]
-        public ActionResult Delete([FromBody] int id)
+        public ActionResult<Post> Delete([FromQuery] int id)
         {
             IPostService postService = this._service as PostService;
             var result = postService.DeleteCustom(id);
@@ -74,7 +74,7 @@ namespace CMS.Post.Api.Controllers
 
         [HttpPut]
         [Route("Update")]
-        public ActionResult Update([FromBody] Post post)
+        public ActionResult<Post> Update([FromBody] Post post)
         {
             IPostService postService = this._service as PostService;
             var result = postService.EditCustom(post);
