@@ -21,12 +21,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CMS.DataModel.DTO\CMS.DataModel.DTO.csproj" />
-    <ProjectReference Include="..\CMS.DataModel\CMS.DataModel.csproj" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Migrations\" />
+    <ProjectReference Include="..\CMS.Base\CMS.Base.csproj" />
   </ItemGroup>
 
 </Project>

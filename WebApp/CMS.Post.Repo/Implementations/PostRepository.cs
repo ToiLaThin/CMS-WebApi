@@ -1,8 +1,8 @@
 ﻿using CMS.Base;
+using Microsoft.EntityFrameworkCore;
 namespace CMS.Post.Repo
 {
     using CMS.DataModel; // ? why
-    using Microsoft.EntityFrameworkCore;
 
     public class PostRepository : BaseRepository<Post>, IPostRepository
     {

@@ -2,7 +2,7 @@
 using CMS.Base;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CMS.Post.Api.Controllers
+namespace CMS.Post.Api
 {
     using CMS.DataModel;
     using CMS.Post.Service;

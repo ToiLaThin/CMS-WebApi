@@ -1,12 +1,12 @@
 ﻿using CMS.Base;
 using CMS.Helper;
+using CMS.Post.Repo;
+using Microsoft.EntityFrameworkCore;
+using AutoMapper;
+
 namespace CMS.Post.Service
 {
-    using AutoMapper;
     using CMS.DataModel;
-    using CMS.Post.Repo;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.EntityFrameworkCore;
 
     public class PostService: BaseService<Post, Post_DTO>, IPostService
     {

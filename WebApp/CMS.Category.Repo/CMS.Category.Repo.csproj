@@ -21,8 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CMS.Base\CMS.Base.csproj" />
-    <ProjectReference Include="..\CMS.DataModel\CMS.DataModel.Domain.csproj" />
+    <ProjectReference Include="..\CMS.Category.DataConnect\CMS.Category.DataConnect.csproj" />
   </ItemGroup>
 
 </Project>

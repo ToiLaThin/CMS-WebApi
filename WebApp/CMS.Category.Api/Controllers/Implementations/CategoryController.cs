@@ -1,9 +1,8 @@
 ﻿using CMS.Base;
 using CMS.Category.Service;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 
-namespace CMS.Category.Api.Controllers
+namespace CMS.Category.Api
 {
     using CMS.DataModel;
 

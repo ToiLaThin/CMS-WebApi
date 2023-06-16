@@ -1,15 +1,12 @@
-﻿
-using CMS.Base;
+﻿using CMS.Base;
 using CMS.Post.DataConnect;
 using CMS.Post.Service;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
+using CMS.Post.Repo;
 
 namespace CMS.Post.Api
 {
     using CMS.DataModel;
-    using CMS.Post.Repo;
 
     public static class PostDependencyInjectionExtension
     {

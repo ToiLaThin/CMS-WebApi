@@ -2,8 +2,8 @@
 
 namespace CMS.DataModel
 {
-    [Table("Category", Schema = "Category")]
-    public class Category : BaseDataModel<int>
+    [Table("Category", Schema = "CategorySchema")]
+    public partial class Category : BaseDataModel<int>
     {
         public Category()
         {
