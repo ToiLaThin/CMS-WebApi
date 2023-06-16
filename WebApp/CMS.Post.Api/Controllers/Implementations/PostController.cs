@@ -1,13 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+﻿// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 using CMS.Base;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CMS.Post.Api.Controllers
 {
     using CMS.DataModel;
     using CMS.Post.Service;
-    using Microsoft.AspNetCore.Http.HttpResults;
-    using System.Runtime.CompilerServices;
 
     [Route("Post")]
     [ApiController]

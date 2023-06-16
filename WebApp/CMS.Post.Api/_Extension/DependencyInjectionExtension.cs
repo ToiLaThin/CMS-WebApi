@@ -11,7 +11,7 @@ namespace CMS.Post.Api
     using CMS.DataModel;
     using CMS.Post.Repo;
 
-    public static class DependencyInjectionExtension
+    public static class PostDependencyInjectionExtension
     {
         public static IServiceCollection PostDependencyInjection(this IServiceCollection services)
         {
