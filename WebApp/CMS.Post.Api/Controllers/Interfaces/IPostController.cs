@@ -5,15 +5,15 @@ namespace CMS.Post.Api.Controllers
     using CMS.DataModel;
     public interface IPostController
     {
-        ActionResult<IEnumerable<Post>> GetAll();
+        ActionResult<IEnumerable<Post_DTO>> GetAll();
 
-        ActionResult<Post> GetOne(int id);
+        ActionResult<Post_DTO> GetOne(int id);
 
-        ActionResult<Post> Add(Post post); //the reuturn type must match the frontend, otherwise, the controller won't receive from fe
+        ActionResult<Post_DTO> Add(Post_DTO post); //the reuturn type must match the frontend, otherwise, the controller won't receive from fe
 
-        ActionResult<Post> Delete(int id);
+        ActionResult<Post_DTO> Delete(int id);
 
-        ActionResult<Post> Update(Post post);
+        ActionResult<Post_DTO> Update(Post_DTO post);
 
 
     }

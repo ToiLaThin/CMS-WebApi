@@ -16,7 +16,7 @@ namespace CMS.Post.Api
         public static IServiceCollection PostDependencyInjection(this IServiceCollection services)
         {
             services.AddScoped<DbContext, PostContext>();
-            services.AddTransient<IBaseService<Post>, PostService>();
+            services.AddTransient<IBaseService<Post, Post_DTO>, PostService>();
             services.AddTransient(typeof(IUnitOfWork<Post>), typeof(UnitOfWork<Post>)) ; //?
             services.AddTransient<IBaseRepository<Post>, PostRepository>();
 

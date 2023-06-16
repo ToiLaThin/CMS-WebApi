@@ -2,29 +2,31 @@
 using CMS.Helper;
 namespace CMS.Post.Service
 {
+    using AutoMapper;
     using CMS.DataModel;
     using CMS.Post.Repo;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
 
-    public class PostService: BaseService<Post>, IPostService
+    public class PostService: BaseService<Post, Post_DTO>, IPostService
     {
         private IPostRepository _postRepository;
-        public PostService(IUnitOfWork<Post> iUoW) : base(iUoW)
+        public PostService(IUnitOfWork<Post> iUoW, IMapper iMapper) : base(iUoW, iMapper)
         {
             //this._unitOfWork = iUoW; //already set this in base dependency injection
             if (_unitOfWork.EntityRepository<PostRepository>() is IBaseRepository<Post> postRepository)
                 this._postRepository = postRepository as IPostRepository;
         }
 
-        public IEnumerable<Post> GetAllCustom()
+        public IEnumerable<Post_DTO> GetAllCustom()
         {
             var allPosts = base.GetAll();
             return allPosts;
         }
 
-        public Post AddCustom(Post post)
+        public Post_DTO AddCustom(Post_DTO postApi)
         {
+            var post = this._mapper.Map<Post>(postApi);
             int? postId = post.Id;
             Post? postFinded = this._postRepository.Find(p => p.Id == postId).FirstOrDefault();
             if(postFinded != null)
@@ -38,17 +40,18 @@ namespace CMS.Post.Service
 
                 this._postRepository.Add(postToAdd); //must use another post to cut the id since it is auto increase
                 this.UnitOfWork.SaveChanges();
-                return post;
+                return postApi;
             }
         }
 
-        public Post? GetCustom(int id)
+        public Post_DTO? GetCustom(int id)
         {
-            Post result = this._postRepository.Find(p => p.Id.Equals(id)).FirstOrDefault();
-            return result ?? null;
+            Post? result = this._postRepository.Find(p => p.Id.Equals(id)).FirstOrDefault();
+            Post_DTO? resultApi = result == null ? null : this._mapper.Map<Post_DTO>(result); //TODO refactor to one liner
+            return resultApi ?? null;
         }
 
-        public Post? DeleteCustom(int id)
+        public Post_DTO? DeleteCustom(int id)
         {
             Post? postToFind = this._postRepository.Get<int>(id);
             if(postToFind != null)
@@ -57,7 +60,8 @@ namespace CMS.Post.Service
                 try
                 {
                     this.UnitOfWork.SaveChanges();
-                    return postToFind;
+                    var result = this._mapper.Map<Post_DTO>(postToFind);
+                    return result;
                 }
                 catch (Exception ex)
                 {
@@ -67,8 +71,9 @@ namespace CMS.Post.Service
             return null;
         }
 
-        public Post? EditCustom(Post post)
+        public Post_DTO? EditCustom(Post_DTO postApi)
         {
+            Post post = this._mapper.Map<Post>(postApi);
             int postId = post.Id;
             Post? postToFind = this._postRepository.Get<int>(postId);
             if (postToFind != null)
@@ -82,7 +87,7 @@ namespace CMS.Post.Service
                 try
                 {
                     this.UnitOfWork.SaveChanges();
-                    return post;
+                    return postApi;
                 }
                 catch (DbUpdateConcurrencyException ex) {
                     throw new Exception(ex.Message);

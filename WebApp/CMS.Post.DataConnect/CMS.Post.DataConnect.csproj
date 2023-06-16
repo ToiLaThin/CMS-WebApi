@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CMS.DataModel.DTO\CMS.DataModel.DTO.csproj" />
     <ProjectReference Include="..\CMS.DataModel\CMS.DataModel.csproj" />
   </ItemGroup>
 

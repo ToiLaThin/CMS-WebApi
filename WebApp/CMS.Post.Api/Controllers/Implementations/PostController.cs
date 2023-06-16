@@ -11,19 +11,19 @@ namespace CMS.Post.Api.Controllers
 
     [Route("Post")]
     [ApiController]
-    public class PostController : BaseController<Post>, IPostController
+    public class PostController : BaseController<Post, Post_DTO>, IPostController
     {
-        public PostController(IBaseService<Post> iPostService) : base(iPostService) { }
+        public PostController(IBaseService<Post, Post_DTO> iPostService) : base(iPostService) { }
 
         [HttpGet]
         [Route("Get")]
-        public ActionResult<Post> GetOne(int id)
+        public ActionResult<Post_DTO> GetOne(int id)
         {
             IPostService postService = this._service as PostService;
-            Post post = postService.GetCustom(id);
-            if (post != null)
+            Post_DTO postApi = postService.GetCustom(id);
+            if (postApi != null)
             {
-                var result = new OkObjectResult(post); //okObjectResult can have not only an status but the object
+                var result = new OkObjectResult(postApi); //okObjectResult can have not only an status but the object
                 return result;
             }
             return new NotFoundResult(); //only status code
@@ -33,7 +33,7 @@ namespace CMS.Post.Api.Controllers
 
         [HttpGet]
         [Route("GetAll")]
-        ActionResult<IEnumerable<Post>> IPostController.GetAll()
+        ActionResult<IEnumerable<Post_DTO>> IPostController.GetAll()
         {
             IPostService postService = this._service as PostService;
             var result = postService.GetAllCustom();
@@ -47,21 +47,21 @@ namespace CMS.Post.Api.Controllers
 
         [HttpPost]
         [Route("Add")]
-        public ActionResult<Post> Add([FromBody] Post post)
+        public ActionResult<Post_DTO> Add([FromBody] Post_DTO postApi)
         {
             IPostService postService = this._service as PostService;
-            var result = postService.AddCustom(post);
+            var result = postService.AddCustom(postApi);
             if (result != null)
             {
                 return new OkObjectResult(result);
             }
             else
-                return new ConflictObjectResult(post);
+                return new ConflictObjectResult(postApi);
         }
 
         [HttpDelete]
         [Route("Delete")]
-        public ActionResult<Post> Delete([FromQuery] int id)
+        public ActionResult<Post_DTO> Delete([FromQuery] int id)
         {
             IPostService postService = this._service as PostService;
             var result = postService.DeleteCustom(id);
@@ -74,10 +74,10 @@ namespace CMS.Post.Api.Controllers
 
         [HttpPut]
         [Route("Update")]
-        public ActionResult<Post> Update([FromBody] Post post)
+        public ActionResult<Post_DTO> Update([FromBody] Post_DTO postApi)
         {
             IPostService postService = this._service as PostService;
-            var result = postService.EditCustom(post);
+            var result = postService.EditCustom(postApi);
             if (result != null)
             {
                 return new OkObjectResult(result);

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using CMS.Post.DataConnect;
 using CMS.Post.Api;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,13 +28,16 @@ builder.Services.PostDependencyInjection();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+string corPolicyName = "thinhnd";
 builder.Services.AddCors((setup) =>
 {
-    setup.AddPolicy("default", (options) =>
+    setup.AddPolicy(corPolicyName, (options) =>
     {
         options.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
     });
 });
+builder.Services.AddAutoMapper(assemblies: Assembly.GetExecutingAssembly()); //TODO try different options
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -44,7 +48,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors("default");
+app.UseCors(corPolicyName);
 app.UseAuthorization();
 
 app.MapControllers();

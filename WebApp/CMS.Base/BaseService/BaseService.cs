@@ -1,13 +1,17 @@
-﻿namespace CMS.Base
+﻿using AutoMapper;
+
+namespace CMS.Base
 {
     //internal -> public 
-    public class BaseService<TEntity> : IBaseService<TEntity> where TEntity : class, new()
+    public class BaseService<TEntity, TApiModel> : IBaseService<TEntity, TApiModel> where TEntity : class, new() where TApiModel: class
     {
         protected readonly IUnitOfWork<TEntity> _unitOfWork;
+        protected readonly IMapper _mapper;
 
-        public BaseService(IUnitOfWork<TEntity> unitOfWork)
+        public BaseService(IUnitOfWork<TEntity> unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         public IUnitOfWork<TEntity> UnitOfWork
@@ -15,66 +19,74 @@
             get => _unitOfWork;
         }
 
-        public virtual TEntity Create(TEntity iEntity)
+        public virtual TApiModel Create(TApiModel iApiModel)//i for injected
         {
             //TODO validate, check before adding, might use helper
-            var result = this._unitOfWork.EntityRepository<BaseRepository<TEntity>>().Add(iEntity);
-            return result;
+            var entity = this._mapper.Map<TEntity>(iApiModel);
+            var resultEntity = this._unitOfWork.EntityRepository<BaseRepository<TEntity>>().Add(entity);
+            var returnApiModel = this._mapper.Map<TApiModel>(resultEntity);
+            return returnApiModel;
         }
 
-        public virtual IEnumerable<TEntity> Create(IEnumerable<TEntity> entitiesList)
+        public virtual IEnumerable<TApiModel> Create(IEnumerable<TApiModel> apiModelList)
         {
             //TODO validate, check before adding, might use helper
-            var result = entitiesList.ToList();
-            this._unitOfWork.EntityRepository<BaseRepository<TEntity>>().AddRange(entitiesList);
+            var entityList = this._mapper.Map<IEnumerable<TEntity>>(apiModelList);
+            var result = apiModelList.ToList();
+            this._unitOfWork.EntityRepository<BaseRepository<TEntity>>().AddRange(entityList);
             return result;
 
         }
 
-        public virtual bool Delete(TEntity iEntity)
+        public virtual bool Delete(TApiModel iApiModel)
         {
             //TODO only if TEntity to be found
-            this._unitOfWork.EntityRepository<BaseRepository<TEntity>>().Remove(iEntity);
+            var entity = this._mapper.Map<TEntity>(iApiModel);
+            this._unitOfWork.EntityRepository<BaseRepository<TEntity>>().Remove(entity);
             return true;
         }
 
-        public virtual bool Delete(IEnumerable<TEntity> entitiesList)
+        public virtual bool Delete(IEnumerable<TApiModel> apiModelList)
         {
             //TODO only if TEntity to be found
-            this._unitOfWork.EntityRepository<BaseRepository<TEntity>>().RemoveRange(entitiesList);
+            var entityList = this._mapper.Map<IEnumerable<TEntity>>(apiModelList);
+            this._unitOfWork.EntityRepository<BaseRepository<TEntity>>().RemoveRange(entityList);
             return true;
         }
 
-        public virtual TEntity FindById<T>(T id)
+        public virtual TApiModel FindById<T>(T id)
         {
-            var result = this._unitOfWork.EntityRepository<BaseRepository<TEntity>>().Get(id);
-            return result;
+            var resultEntity = this._unitOfWork.EntityRepository<BaseRepository<TEntity>>().Get(id);
+            var returnApiModel = this._mapper.Map<TApiModel>(resultEntity);
+            return returnApiModel;
         }
 
-        public virtual IEnumerable<TEntity> GetAll()
+        public virtual IEnumerable<TApiModel> GetAll()
         {
-            var result = this._unitOfWork.EntityRepository<BaseRepository<TEntity>>().GetAll();
-            return this.ToList(result);
+            var resultEntityList = this._unitOfWork.EntityRepository<BaseRepository<TEntity>>().GetAll();
+            var resultApiList = this._mapper.Map<IEnumerable<TApiModel>>(resultEntityList);
+
+            return this.ToList(resultApiList);
         }
 
-        public virtual IEnumerable<TEntity> sortByCreatedDate(IEnumerable<TEntity> iEntity, bool isIncrease)
+        public virtual IEnumerable<TApiModel> sortByCreatedDate(IEnumerable<TApiModel> iApiModel, bool isIncrease)
         {
             throw new NotImplementedException();
         }
 
-        public virtual List<TEntity> ToList(IEnumerable<TEntity> entitiesList)
+        public virtual List<TApiModel> ToList(IEnumerable<TApiModel> apiModelList)
         {
-            return entitiesList.ToList();
+            return apiModelList.ToList();
         }
 
-        public virtual TEntity Update(TEntity iEntity)
+        public virtual TApiModel Update(TApiModel iApiModel)
         {
-            var result = iEntity;
-            this._unitOfWork.EntityRepository<BaseRepository<TEntity>>().Update(iEntity); 
-            return result;
+            var entity = this._mapper.Map<TEntity>(iApiModel);
+            this._unitOfWork.EntityRepository<BaseRepository<TEntity>>().Update(entity); 
+            return iApiModel;
         }
 
-        public virtual bool Validate(TEntity iEntity)
+        public virtual bool Validate(TApiModel iApiModel)
         {
             throw new NotImplementedException();
         }
