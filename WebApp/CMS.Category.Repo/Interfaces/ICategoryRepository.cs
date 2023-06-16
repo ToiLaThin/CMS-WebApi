@@ -1,6 +1,9 @@
-﻿namespace CMS.Category.Repo
+﻿using CMS.Base;
+
+namespace CMS.Category.Repo
 {
-    public interface ICategoryRepository
+    using CMS.DataModel;
+    public interface ICategoryRepository: IBaseRepository<Category>
     {
     }
 }

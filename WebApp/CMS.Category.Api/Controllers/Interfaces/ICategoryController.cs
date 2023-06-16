@@ -7,5 +7,14 @@ namespace CMS.Category.Api.Controllers
     {
         ActionResult<IEnumerable<Category_DTO>> GetAll();
 
+        ActionResult<Category_DTO> GetOne(int id);
+
+        ActionResult<Category_DTO> Add(Category_DTO category);
+
+        ActionResult<Category_DTO> Delete(int id);
+
+        ActionResult<Category_DTO> Update(Category_DTO category);
+
+
     }
 }
