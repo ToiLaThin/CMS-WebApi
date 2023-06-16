@@ -9,7 +9,7 @@ namespace CMS.DataModel
         Archived = 2
     }
 
-    [Table("Post", Schema = "Post")]
+    [Table("Post", Schema = "PostSchema")]
     public partial class Post : BaseDataModel<int>
     {
         public string Title { get; set; }

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -24,11 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CMS.Base\CMS.Base.csproj" />
     <ProjectReference Include="..\CMS.Category.Service\CMS.Category.Service.csproj" />
-    <ProjectReference Include="..\CMS.DataModel.DTO\CMS.DataModel.DTO.csproj" />
-    <ProjectReference Include="..\CMS.DataModel\CMS.DataModel.Domain.csproj" />
-    <ProjectReference Include="..\CMS.Post.DataConnect\CMS.Post.DataConnect.csproj" />
   </ItemGroup>
 
 </Project>

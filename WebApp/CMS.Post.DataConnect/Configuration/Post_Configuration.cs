@@ -1,11 +1,11 @@
-﻿namespace CMS.Post.DataConnect
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+namespace CMS.Post.DataConnect
 {
     //using inside namespace to avoid conflict 
     using CMS.DataModel;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-    internal class Post_Configuration : IEntityTypeConfiguration<Post>
+    internal partial class Post_Configuration : IEntityTypeConfiguration<Post>
     {
         public void Configure(EntityTypeBuilder<Post> builder)
         {

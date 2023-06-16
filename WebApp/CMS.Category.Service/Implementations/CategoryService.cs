@@ -1,12 +1,11 @@
-﻿using CMS.Base;
+﻿using AutoMapper;
+using CMS.Base;
 using CMS.Category.Repo;
+using CMS.Helper;
+using Microsoft.EntityFrameworkCore;
 namespace CMS.Category.Service
 {
-    using AutoMapper;
     using CMS.DataModel;
-    using CMS.Helper;
-    using Microsoft.EntityFrameworkCore;
-    using System.Collections.Generic;
 
     public class CategoryService : BaseService<Category, Category_DTO>, ICategoryService
     {
@@ -22,7 +21,7 @@ namespace CMS.Category.Service
         {
             var category = this._mapper.Map<Category>(categoryApi);
             int? categoryId = categoryApi.Id;
-            Category categoryFinded = this._categoryRepository.Get<int?>(categoryId);
+            Category categoryFinded = this._categoryRepository.Get<int?>(categoryId); //TO FIX
             if(categoryFinded == null) {
                 return null;
             } 

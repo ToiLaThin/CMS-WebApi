@@ -1,5 +1,5 @@
-using CMS.Category.Api._Extension;
-using CMS.Post.DataConnect;
+using CMS.Category.Api;
+using CMS.Category.DataConnect;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
@@ -12,12 +12,12 @@ var config = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirector
 string? cmsConnStr = config.GetConnectionString("CMS_db");
 
 // Add services to the container.
-builder.Services.AddDbContext<PostContext>(optionsBuilder =>
+builder.Services.AddDbContext<CategoryContext>(optionsBuilder =>
 {
     optionsBuilder.UseSqlServer(cmsConnStr,
         sqlServerBuilderAction =>
         {
-            sqlServerBuilderAction.MigrationsHistoryTable("__EFMigrationHistory", "Post");
+            sqlServerBuilderAction.MigrationsHistoryTable("__EFMigrationHistory", "Category");
             //sqlServerBuilderAction.MigrationsAssembly("CMS.Post.DataConnect"); since we run migration on DataConnect
         }
     );

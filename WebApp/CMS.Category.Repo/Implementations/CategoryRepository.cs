@@ -1,9 +1,9 @@
 ﻿using CMS.Base;
+using Microsoft.EntityFrameworkCore;
 
 namespace CMS.Category.Repo
 {
     using CMS.DataModel;
-    using Microsoft.EntityFrameworkCore;
 
     public class CategoryRepository : BaseRepository<Category>, ICategoryRepository
     {

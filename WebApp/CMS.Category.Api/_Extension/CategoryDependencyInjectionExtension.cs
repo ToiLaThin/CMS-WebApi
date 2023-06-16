@@ -1,10 +1,10 @@
 ﻿using CMS.Base;
+using CMS.Category.DataConnect;
 using CMS.Category.Repo;
 using CMS.Category.Service;
-using CMS.Post.DataConnect; //to change
 using Microsoft.EntityFrameworkCore;
 
-namespace CMS.Category.Api._Extension
+namespace CMS.Category.Api
 {
     using CMS.DataModel;
 
@@ -12,7 +12,7 @@ namespace CMS.Category.Api._Extension
     {
         public static IServiceCollection CategoryDependencyInjection(this IServiceCollection services)
         {
-            services.AddScoped<DbContext, PostContext>();//to change to CategoryContext
+            services.AddScoped<DbContext, CategoryContext>();//to change to CategoryContext
             services.AddTransient<IBaseService<Category, Category_DTO>, CategoryService>();
             services.AddTransient<IUnitOfWork<Category>, UnitOfWork<Category>>();
             services.AddTransient<IBaseRepository<Category>, CategoryRepository>();

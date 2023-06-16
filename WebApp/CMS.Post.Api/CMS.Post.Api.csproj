@@ -24,11 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CMS.Base\CMS.Base.csproj" />
-    <ProjectReference Include="..\CMS.DataModel.DTO\CMS.DataModel.DTO.csproj" />
-    <ProjectReference Include="..\CMS.DataModel\CMS.DataModel.Domain.csproj" />
-    <ProjectReference Include="..\CMS.Post.DataConnect\CMS.Post.DataConnect.csproj" />
-    <ProjectReference Include="..\CMS.Post.Repo\CMS.Post.Repo.csproj" />
     <ProjectReference Include="..\CMS.Post.Service\CMS.Post.Service.csproj" />
   </ItemGroup>
 

@@ -1,7 +1,7 @@
 ﻿using CMS.DataModel;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CMS.Category.Api.Controllers
+namespace CMS.Category.Api
 {
     public interface ICategoryController
     {

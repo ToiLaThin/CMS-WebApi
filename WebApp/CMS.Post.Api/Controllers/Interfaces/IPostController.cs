@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace CMS.Post.Api.Controllers
+namespace CMS.Post.Api
 {
     using CMS.DataModel;
     public interface IPostController

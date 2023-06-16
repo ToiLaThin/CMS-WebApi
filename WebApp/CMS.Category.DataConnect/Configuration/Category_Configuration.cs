@@ -1,10 +1,10 @@
-﻿using CMS.DataModel;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace CMS.Post.DataConnect
+namespace CMS.Category.DataConnect
 {
-    internal class Category_Configuration : IEntityTypeConfiguration<Category>
+    using CMS.DataModel;
+    internal partial class Category_Configuration : IEntityTypeConfiguration<Category>
     {
         public void Configure(EntityTypeBuilder<Category> builder)
         {

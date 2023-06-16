@@ -1,6 +1,6 @@
-﻿namespace CMS.Post.Service
+﻿using CMS.Base;
+namespace CMS.Post.Service
 {
-    using CMS.Base;
     using CMS.DataModel;
 
     public interface IPostService: IBaseService<Post, Post_DTO>
