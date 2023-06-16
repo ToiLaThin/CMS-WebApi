@@ -20,4 +20,11 @@
     </PackageReference>
   </ItemGroup>
   
+  <ItemGroup>
+    <ProjectReference Include="..\CMS.Base\CMS.Base.csproj" />
+    <ProjectReference Include="..\CMS.DataModel.DTO\CMS.DataModel.DTO.csproj" />
+    <ProjectReference Include="..\CMS.DataModel\CMS.DataModel.Domain.csproj" />
+    <ProjectReference Include="..\CMS.Category.Repo\CMS.Category.Repo.csproj" />
+  </ItemGroup>
+  
 </Project>

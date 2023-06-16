@@ -20,4 +20,9 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CMS.Base\CMS.Base.csproj" />
+    <ProjectReference Include="..\CMS.DataModel\CMS.DataModel.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
