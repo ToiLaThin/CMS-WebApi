@@ -23,20 +23,21 @@ namespace CMS.Category.Service
             int? categoryId = categoryApi.Id;
             Category categoryFinded = this._categoryRepository.Get<int?>(categoryId); //TO FIX
             if(categoryFinded == null) {
-                return null;
-            } 
-            else
-            {
                 CategoryBuilder categoryBuilder = new CategoryBuilder(); //not have id since this is add
                 Category categoryToAdd = categoryBuilder.SetCategoryWithOutId(category).Build();
-                try {
+                try
+                {
                     this._categoryRepository.Add(categoryToAdd);
                     this.UnitOfWork.SaveChanges();
                 }
-                catch (Exception ex) {
+                catch (Exception ex)
+                {
                     throw new Exception(ex.Message);
                 }
                 return categoryApi;
+            } 
+            else {
+                return null;
             }
         }
 

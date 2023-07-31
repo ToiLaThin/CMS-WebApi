@@ -6,6 +6,8 @@ namespace CMS.Category.Api
 {
     using CMS.DataModel;
 
+    [ApiController]
+    [Route("Category")]
     public class CategoryController : BaseController<Category, Category_DTO>, ICategoryController
     {
         public CategoryController(IBaseService<Category, Category_DTO> iCategoryService) : base(iCategoryService) { }
