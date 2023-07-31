@@ -25,6 +25,21 @@
       "UpstreamPathTemplate": "/Category/{anyControllerActionParams}",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
       "Priority": 0
+    },
+    {
+      "DownstreamPathTemplate": "/Auth/{anyControllerActionParams}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7105
+          //This is url of redirect auth
+
+        }
+      ],
+      "UpstreamPathTemplate": "/Auth/{anyControllerActionParams}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "Priority": 0
     }
   ],
   "GlobalConfiguration": {
