@@ -27,7 +27,7 @@
       "Priority": 0
     },
     {
-      "DownstreamPathTemplate": "/Auth/{anyControllerActionParams}",
+      "DownstreamPathTemplate": "/Auth/Redirect/{anyControllerActionParams}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -37,7 +37,7 @@
 
         }
       ],
-      "UpstreamPathTemplate": "/Auth/{anyControllerActionParams}",
+      "UpstreamPathTemplate": "/Auth/Redirect/{anyControllerActionParams}",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
       "Priority": 0
     }

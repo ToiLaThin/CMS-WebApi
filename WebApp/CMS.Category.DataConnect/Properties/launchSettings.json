@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "CMS.Category.DataConnect": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:56387;http://localhost:56405"
+    }
+  }
+}
