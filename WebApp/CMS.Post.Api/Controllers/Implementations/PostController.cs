@@ -6,6 +6,8 @@ namespace CMS.Post.Api
 {
     using CMS.DataModel;
     using CMS.Post.Service;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
+    using Microsoft.AspNetCore.Authorization;
 
     [Route("Post")]
     [ApiController]
@@ -13,6 +15,7 @@ namespace CMS.Post.Api
     {
         public PostController(IBaseService<Post, Post_DTO> iPostService) : base(iPostService) { }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet]
         [Route("Get")]
         public ActionResult<Post_DTO> GetOne(int id)
@@ -43,6 +46,7 @@ namespace CMS.Post.Api
                 return new NotFoundResult();
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
         [Route("Add")]
         public ActionResult<Post_DTO> Add([FromBody] Post_DTO postApi)

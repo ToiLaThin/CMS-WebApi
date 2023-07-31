@@ -2,6 +2,10 @@ using Microsoft.EntityFrameworkCore;
 using CMS.Post.DataConnect;
 using CMS.Post.Api;
 using System.Reflection;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,10 +26,23 @@ builder.Services.AddDbContext<PostContext>(optionsBuilder =>
         }
     );
 });
+builder.Services.AddAuthentication()
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, jwtOption =>
+                {
+                    jwtOption.Authority = "https://localhost:7134"; //TO FIX
+                    jwtOption.SaveToken = true;
+                    jwtOption.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidateIssuerSigningKey = false,
+                        ValidateActor = false,
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                    };
+                });
+
 builder.Services.AddControllers();
 
 builder.Services.PostDependencyInjection();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -49,6 +66,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors(corPolicyName);
+app.UseAuthentication();
+//app.UseStatusCodePages(async context => {
+//    var request = context.HttpContext.Request;
+//    var response = context.HttpContext.Response;
+//    if (response.StatusCode == (int)HttpStatusCode.Unauthorized) {
+//        response.Redirect("http://localhost:4200/"); //Redirect to angular but will have cors issue in frontEnd -> solution is use proxy(learn more if have time)
+//    }
+//});
 app.UseAuthorization();
 
 app.MapControllers();
