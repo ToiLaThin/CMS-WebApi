@@ -27,7 +27,7 @@ builder.Services.AddAuthentication(authConfig =>
                 })
                 .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, oidcConfig =>
                 {
-                    oidcConfig.Authority = "https://localhost:7134"; //TOFIX TO URL OF IDENTITY SERVER
+                    oidcConfig.Authority = "https://localhost:7134"; //URL OF IDENTITY SERVER
                     oidcConfig.ClientId = "client_id";
                     oidcConfig.ClientSecret = "client_secret";
                     oidcConfig.SaveTokens = true; //cookie have idtoken and acess token inside of it
@@ -40,14 +40,14 @@ var app = builder.Build();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapGet("/login/identityServer4", (HttpContext ctx) => {
+app.MapGet("Auth/Redirect/IdentityServer4", (HttpContext ctx) => {
     return ctx.ChallengeAsync(OpenIdConnectDefaults.AuthenticationScheme, new AuthenticationProperties()
     {
-        RedirectUri = "/token"
+        RedirectUri = "Auth/Redirect/Token"
     });
 });
 
-app.MapGet("/token", async (HttpContext ctx) =>
+app.MapGet("Auth/Redirect/Token", async (HttpContext ctx) =>
 {
     var accessToken = await ctx.GetTokenAsync("access_token");
     var idToken = await ctx.GetTokenAsync("id_token");
