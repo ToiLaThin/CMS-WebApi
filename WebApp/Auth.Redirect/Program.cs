@@ -1,4 +1,4 @@
-using IdentityModel.Client;
+﻿using IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -34,24 +34,38 @@ builder.Services.AddAuthentication(authConfig =>
                     oidcConfig.ResponseType = "code";
                 });
 builder.Services.AddAuthorization();
-
+string corPolicyName = "thinhnd"; //add cors
+builder.Services.AddCors((setup) =>
+{
+    setup.AddPolicy(corPolicyName, (options) =>
+    {
+        options.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
+    });
+});
 
 var app = builder.Build();
+app.UseCors(corPolicyName);
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapGet("Auth/Redirect/IdentityServer4", (HttpContext ctx) => {
     return ctx.ChallengeAsync(OpenIdConnectDefaults.AuthenticationScheme, new AuthenticationProperties()
     {
-        RedirectUri = "Auth/Redirect/Token"
+        //RedirectUri = "Auth/Redirect/Token"
+        //then from angular send a get request to get token remember to include the cookie
+
+        //this will have a succsufull notification
+        RedirectUri = "http://localhost:4200/"
     });
 });
 
-app.MapGet("Auth/Redirect/Token", async (HttpContext ctx) =>
+app.MapGet("Auth/Redirect/Token",[HttpGet] async (HttpContext ctx) =>
 {
     var accessToken = await ctx.GetTokenAsync("access_token");
     var idToken = await ctx.GetTokenAsync("id_token");
-
+    //mặc định httpClient angular ko include cookie vào get request => thêm withCredential: true
+    //withCredential: true chỉ có 2 cookie Identity.Cookie và idsrv:sesison
+    //gửi cả 6 cookie mới có access token và id token asp.net core cookie.c1 và asp.net core cookie.c2
     var jwtIdToken = new JwtSecurityTokenHandler().ReadJwtToken(idToken);
     var jwtAccessToken = new JwtSecurityTokenHandler().ReadJwtToken(accessToken);
     return accessToken.ToString() + "\n" + idToken.ToString();

@@ -54,10 +54,18 @@ builder.Services.AddAuthentication().AddGoogle("Google", googleOption =>
     googleOption.SignInScheme = IdentityConstants.ExternalScheme; //Identity.External will be default => cookie represent authenticated with google
                                                                   //googleOption.SaveTokens = true; //để lấy access token trong callback uri
 });
-
+string corPolicyName = "thinhnd"; //add cors
+builder.Services.AddCors((setup) =>
+{
+    setup.AddPolicy(corPolicyName, (options) =>
+    {
+        options.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
+    });
+});
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+app.UseCors(corPolicyName);
 app.UseIdentityServer();
 app.MapDefaultControllerRoute();
 app.Run();
