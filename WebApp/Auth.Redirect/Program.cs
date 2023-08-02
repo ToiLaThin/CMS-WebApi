@@ -70,9 +70,28 @@ app.MapGet("Auth/Redirect/Token", [HttpGet] async (HttpContext ctx) =>
     var jwtIdToken = new JwtSecurityTokenHandler().ReadJwtToken(idToken);
     var jwtAccessToken = new JwtSecurityTokenHandler().ReadJwtToken(accessToken);
     ctx.Response.StatusCode = 222; //to identity  thís as special token request it 's 2xx which is still success
-    //Response.Headers.AccessControlAllowOrigin;
-    //Response.Headers.AccessControlAllowCredentials;
-    //these two above will be set in middleware of ocelot so if we assign value to them, they will be overriden
+                                   //Response.Headers.AccessControlAllowOrigin;
+                                   //Response.Headers.AccessControlAllowCredentials;
+                                   //these two above will be set in middleware of ocelot so if we assign value to them, they will be overriden
+
+
+    //once we safely get jwt token, we should delete all cookie
+    //have to set expires and secure also and even domain, path, samesite, otherwise the set cookie = '' wwill not wowrk
+    //see this  https://stackoverflow.com/a/48919470 and https://stackoverflow.com/a/63297464
+    //if we just call Delete(cookieName), it will not work
+    foreach (var cookieName in ctx.Request.Cookies.Keys)
+    {
+        //ctx.Response.Cookies.Append(cookieName, String.Empty);
+        ctx.Response.Cookies.Delete(cookieName, new CookieOptions()
+        {
+            Domain = "localhost",
+            Path = "/",
+            //Expires = DateTime.Now.AddDays(-1),
+            Secure = true,
+            SameSite = SameSiteMode.None
+        });
+    }
+    var cookies = ctx.Response.Cookies;
     return $"{accessToken};{idToken}";
 });
 app.Run();
