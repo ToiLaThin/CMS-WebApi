@@ -23,7 +23,7 @@ builder.Services.AddAuthentication(authConfig =>
                 {
                     //cookieOption.LoginPath = "/login/identityServer4";
                     //cookieOption.AccessDeniedPath = "/unauthorized";
-                    //secret api use cookie authentication
+                    cookieOption.Cookie.SameSite = SameSiteMode.None; //for angular can include asp.net core cookie in it request to received token
                 })
                 .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, oidcConfig =>
                 {
@@ -48,27 +48,32 @@ app.UseCors(corPolicyName);
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapGet("Auth/Redirect/IdentityServer4", (HttpContext ctx) => {
+app.MapGet("Auth/Redirect/IdentityServer4", (HttpContext ctx) =>
+{
     return ctx.ChallengeAsync(OpenIdConnectDefaults.AuthenticationScheme, new AuthenticationProperties()
     {
         //RedirectUri = "Auth/Redirect/Token"
         //then from angular send a get request to get token remember to include the cookie
 
         //this will have a succsufull notification
-        RedirectUri = "http://localhost:4200/"
+        RedirectUri = "http://localhost:4200/auth/token"
     });
 });
 
-app.MapGet("Auth/Redirect/Token",[HttpGet] async (HttpContext ctx) =>
+app.MapGet("Auth/Redirect/Token", [HttpGet] async (HttpContext ctx) =>
 {
     var accessToken = await ctx.GetTokenAsync("access_token");
     var idToken = await ctx.GetTokenAsync("id_token");
     //mặc định httpClient angular ko include cookie vào get request => thêm withCredential: true
-    //withCredential: true chỉ có 2 cookie Identity.Cookie và idsrv:sesison
-    //gửi cả 6 cookie mới có access token và id token asp.net core cookie.c1 và asp.net core cookie.c2
+    //withCredential: true chỉ có 2 cookie Identity.Cookie và idsrv:sesison => phải set samesite = None?
+    //gửi cả 6 cookie mới có access token và id token asp.net core cookie.c1 và asp.net core cookie.c2 => sucess
     var jwtIdToken = new JwtSecurityTokenHandler().ReadJwtToken(idToken);
     var jwtAccessToken = new JwtSecurityTokenHandler().ReadJwtToken(accessToken);
-    return accessToken.ToString() + "\n" + idToken.ToString();
+    ctx.Response.StatusCode = 222; //to identity  thís as special token request it 's 2xx which is still success
+    //Response.Headers.AccessControlAllowOrigin;
+    //Response.Headers.AccessControlAllowCredentials;
+    //these two above will be set in middleware of ocelot so if we assign value to them, they will be overriden
+    return $"{accessToken};{idToken}";
 });
 app.Run();
 
