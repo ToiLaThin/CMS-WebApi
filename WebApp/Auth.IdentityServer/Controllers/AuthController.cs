@@ -116,7 +116,12 @@ namespace IdentityServer.Controllers
             }
 
             var user = new IdentityUser(vm.Username);
+            var claimToAdd = new Claim(ClaimTypes.Country, "VN");
+            var claimToAddToAccessToken = new Claim("role", "admin");
             var result = await _userManager.CreateAsync(user);
+            await _userManager.AddClaimAsync(user, claimToAdd); //TO TEST
+            await _userManager.AddClaimAsync(user, claimToAddToAccessToken); //TO TEST
+            
 
             if (!result.Succeeded)
             {
