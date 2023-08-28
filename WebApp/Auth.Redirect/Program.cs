@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +33,9 @@ builder.Services.AddAuthentication(authConfig =>
                     oidcConfig.ClientSecret = "client_secret";
                     oidcConfig.SaveTokens = true; //cookie have idtoken and acess token inside of it
                     oidcConfig.ResponseType = "code";
+
+                    oidcConfig.Scope.Add("User.Info"); // require to get scope Usser Info
+                    oidcConfig.Scope.Add("MyApi.Scope"); //request to this scope to get claim for access_token
                 });
 builder.Services.AddAuthorization();
 string corPolicyName = "thinhnd"; //add cors
@@ -64,6 +68,7 @@ app.MapGet("Auth/Redirect/Token", [HttpGet] async (HttpContext ctx) =>
 {
     var accessToken = await ctx.GetTokenAsync("access_token");
     var idToken = await ctx.GetTokenAsync("id_token");
+    var claims = ctx.User.Claims.ToList();
     //mặc định httpClient angular ko include cookie vào get request => thêm withCredential: true
     //withCredential: true chỉ có 2 cookie Identity.Cookie và idsrv:sesison => phải set samesite = None?
     //gửi cả 6 cookie mới có access token và id token asp.net core cookie.c1 và asp.net core cookie.c2 => sucess
