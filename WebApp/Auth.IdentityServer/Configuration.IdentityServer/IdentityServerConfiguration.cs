@@ -2,6 +2,7 @@
 using IdentityServer4;
 using IdentityServer4.Models;
 using System.Security.Claims;
+using CMS.Helper;
 
 namespace IdentityServer
 {
@@ -18,8 +19,8 @@ namespace IdentityServer
                 Name = "User.Info",
                 UserClaims =
                 {
-                    ClaimTypes.Country,
-                    "role"
+                    MyClaimType.Country,
+                    MyClaimType.Role
                 }
             }
         };
@@ -34,7 +35,7 @@ namespace IdentityServer
             //user claims will be include in access token when request in openid middleware, identity resource is for id token
             new ApiScope("MyApi.Scope", new string[]
             {
-                "role" //user claim should be specify here not in GetApis(access_token won't have tthis role claim)
+                MyClaimType.Role //user claim should be specify here not in GetApis(access_token won't have tthis role claim)
             }),
         };
         public static IEnumerable<Client> GetClients() => new List<Client>
