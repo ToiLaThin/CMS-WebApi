@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using CMS.Helper;
 
 namespace IdentityServer.Controllers
 {
@@ -116,8 +117,8 @@ namespace IdentityServer.Controllers
             }
 
             var user = new IdentityUser(vm.Username);
-            var claimToAdd = new Claim(ClaimTypes.Country, "VN");
-            var claimToAddToAccessToken = new Claim("role", "admin");
+            var claimToAdd = new Claim(MyClaimType.Country, "VN");
+            var claimToAddToAccessToken = new Claim(MyClaimType.Role, "admin");
             var result = await _userManager.CreateAsync(user);
             await _userManager.AddClaimAsync(user, claimToAdd); //TO TEST
             await _userManager.AddClaimAsync(user, claimToAddToAccessToken); //TO TEST
