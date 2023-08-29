@@ -1,10 +1,12 @@
 ﻿// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 using CMS.Base;
 using Microsoft.AspNetCore.Mvc;
+using CMS.Helper;
 
 namespace CMS.Post.Api
 {
     using CMS.DataModel;
+    using CMS.Helper.NewFolder;
     using CMS.Post.Service;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Authorization;
@@ -31,7 +33,7 @@ namespace CMS.Post.Api
         }
 
 
-
+        [Authorize(Policy = PolicyNames.AdminPolicy, Roles = $"{RoleType.Admin},{RoleType.AuthenticatedUser}")]
         [HttpGet]
         [Route("GetAll")]
         ActionResult<IEnumerable<Post_DTO>> IPostController.GetAll()
@@ -46,7 +48,7 @@ namespace CMS.Post.Api
                 return new NotFoundResult();
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(Policy = PolicyNames.AdminPolicy, Roles = $"{RoleType.Admin}")]
         [HttpPost]
         [Route("Add")]
         public ActionResult<Post_DTO> Add([FromBody] Post_DTO postApi)
@@ -61,6 +63,7 @@ namespace CMS.Post.Api
                 return new ConflictObjectResult(postApi);
         }
 
+        [Authorize(Policy = PolicyNames.AuthenticatedUserPolicy, Roles = $"{RoleType.AuthenticatedUser}")]
         [HttpDelete]
         [Route("Delete")]
         public ActionResult<Post_DTO> Delete([FromQuery] int id)
