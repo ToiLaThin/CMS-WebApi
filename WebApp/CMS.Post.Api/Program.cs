@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Net;
+using CMS.Helper; //ref by post.api.service
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +40,22 @@ builder.Services.AddAuthentication()
                         ValidateAudience = false,
                     };
                 });
+
+builder.Services.AddAuthorization(authOption =>
+{
+    authOption.AddPolicy(PolicyNames.AdminPolicy, policy =>
+    {
+        policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
+        policy.RequireAuthenticatedUser();
+        policy.RequireRole("admin");
+    });
+    authOption.AddPolicy(PolicyNames.AuthenticatedUserPolicy, policy =>
+    {
+        policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
+        policy.RequireAuthenticatedUser();
+        policy.RequireRole("authenticatedUser");
+    });
+});
 
 builder.Services.AddControllers();
 

@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using CMS.Helper;
+using CMS.Helper.NewFolder;
 
 namespace IdentityServer.Controllers
 {
@@ -26,6 +27,7 @@ namespace IdentityServer.Controllers
         public async Task<IActionResult> Login(string returnUrl = "https://localhost:7134/Auth/Register") //URL of identity server controller register, change this if necessary
         {
             var externalProviders = await _signInManager.GetExternalAuthenticationSchemesAsync();
+            TempData["returnUrl"] = returnUrl;
             return View(new LoginViewModel
             {
                 ReturnUrl = returnUrl,
@@ -52,7 +54,10 @@ namespace IdentityServer.Controllers
         [HttpGet]
         public async Task<IActionResult> Register()
         {
-            return View();
+            return View(new RegisterViewModel
+            {
+                ReturnUrl = TempData["returnUrl"].ToString()
+            });
         }
 
         [HttpPost]
@@ -61,8 +66,14 @@ namespace IdentityServer.Controllers
             if (rvm.Password == rvm.PasswordConfirmed)
             {
                 //phai cos await neu ko se redirect trc khi tao user
-                var result = await _userManager.CreateAsync(new IdentityUser(rvm.Username), rvm.Password);
-                return View("RegisterSuccess");
+                var user = new IdentityUser(rvm.Username);
+                var result = await _userManager.CreateAsync(user, rvm.Password);
+                if (result.Succeeded)
+                {
+                    await _userManager.AddClaimAsync(user, new Claim(MyClaimType.Role, RoleType.AuthenticatedUser));
+                    await _signInManager.SignInAsync(user, false);
+                }
+                return Redirect(rvm.ReturnUrl);
             }
             else
             {
@@ -118,7 +129,7 @@ namespace IdentityServer.Controllers
 
             var user = new IdentityUser(vm.Username);
             var claimToAdd = new Claim(MyClaimType.Country, "VN");
-            var claimToAddToAccessToken = new Claim(MyClaimType.Role, "admin");
+            var claimToAddToAccessToken = new Claim(MyClaimType.Role, RoleType.Admin);
             var result = await _userManager.CreateAsync(user);
             await _userManager.AddClaimAsync(user, claimToAdd); //TO TEST
             await _userManager.AddClaimAsync(user, claimToAddToAccessToken); //TO TEST

@@ -7,5 +7,7 @@
         public string Password { get; set; }
 
         public string PasswordConfirmed { get; set; }
+
+        public string ReturnUrl { get; set; }
     }
 }
