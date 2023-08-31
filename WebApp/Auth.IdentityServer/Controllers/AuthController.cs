@@ -1,18 +1,10 @@
-﻿using IdentityServer.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using CMS.Helper;
-using CMS.Helper.NewFolder;
-using CMS.Helper.SharedServices;
+﻿using CMS.Helper.SharedServices;
+using CMS.Helper.StaticClass;
 using CMS.Helper.UtilsClass;
-using System.Net.WebSockets;
-using System.Runtime.Intrinsics.Arm;
 using IdentityServer.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace IdentityServer.Controllers
 {
@@ -165,7 +157,7 @@ namespace IdentityServer.Controllers
             {
                 //if not go to login page again
                 return RedirectToAction("Login");
-            }
+            }            
 
             //else sign in get claims and set to ctx.User and may save those claims to db?
             var result = await _signInManager
@@ -181,10 +173,14 @@ namespace IdentityServer.Controllers
             //else create that facebook user in db using ExternalRegister
             var username = info.Principal.FindFirst(ClaimTypes.Name).Value; //get info.principle.Name represent the face book username
             //cannot modify the claim so we extract the value then modify the value
+            string userExternalEmail = info.Principal.Claims
+                                          .FirstOrDefault(x => x.Type == ClaimTypes.Email).Value;
+            //get user email
             return View("ExternalRegister", new ExternalRegisterViewModel
             {
                 Username = username.Replace(" ", ""),
-                ReturnUrl = returnUrl
+                ReturnUrl = returnUrl,
+                Email = userExternalEmail
             });
         }
 
@@ -197,7 +193,13 @@ namespace IdentityServer.Controllers
                 return RedirectToAction("Login");
             }
 
-            var user = new IdentityUser(vm.Username);
+            var user = new IdentityUser
+            {
+                UserName = vm.Username,
+                Email = vm.Email,
+                EmailConfirmed = true //because email confirmed required to login
+            };
+
             var claimToAdd = new Claim(MyClaimType.Country, "VN");
             var claimToAddToAccessToken = new Claim(MyClaimType.Role, RoleType.Admin);
             var result = await _userManager.CreateAsync(user);
