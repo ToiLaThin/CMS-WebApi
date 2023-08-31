@@ -5,8 +5,8 @@ using System.Reflection;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using System.Net;
 using CMS.Helper; //ref by post.api.service
+using CMS.Helper.StaticClass; 
 
 var builder = WebApplication.CreateBuilder(args);
 

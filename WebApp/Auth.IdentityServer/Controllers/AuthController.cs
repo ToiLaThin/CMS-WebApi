@@ -1,18 +1,10 @@
-﻿using IdentityServer.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using CMS.Helper;
-using CMS.Helper.NewFolder;
-using CMS.Helper.SharedServices;
+﻿using CMS.Helper.SharedServices;
+using CMS.Helper.StaticClass;
 using CMS.Helper.UtilsClass;
-using System.Net.WebSockets;
-using System.Runtime.Intrinsics.Arm;
 using IdentityServer.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace IdentityServer.Controllers
 {
