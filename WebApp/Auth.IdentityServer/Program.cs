@@ -1,4 +1,6 @@
-﻿using IdentityServer;
+﻿using CMS.Helper.OptionPatternClasses;
+using CMS.Helper.SharedServices;
+using IdentityServer;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
@@ -7,6 +9,10 @@ using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
+//config option pattern for email sender TODO refactor for better structure, extension maybe?
+IConfiguration emailConfiguration = builder.Configuration.GetSection("MailOptions");
+builder.Services.Configure<MailOptions>(emailConfiguration);
+builder.Services.AddTransient<EmailSenderService, EmailSenderService>();
 
 //config asp.net core identity for storing user infomation
 string connString = builder.Configuration.GetConnectionString("CMS_db");
@@ -24,10 +30,14 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(identityConfig =>
     identityConfig.Password.RequireDigit = false;
     identityConfig.Password.RequireUppercase = false;
     identityConfig.Password.RequireNonAlphanumeric = false;
+
+    //config to require confirmed email
+    identityConfig.SignIn.RequireConfirmedEmail = true;
 })
     .AddEntityFrameworkStores<IdentityDbContext>()
     .AddUserManager<UserManager<IdentityUser>>()
-    .AddSignInManager<SignInManager<IdentityUser>>();
+    .AddSignInManager<SignInManager<IdentityUser>>()
+    .AddDefaultTokenProviders(); //for token confirm email generation
 //configure cookie to store identity server session
 builder.Services.ConfigureApplicationCookie(cookieConfig =>
 {

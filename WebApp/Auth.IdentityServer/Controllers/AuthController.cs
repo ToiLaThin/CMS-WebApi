@@ -8,6 +8,11 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using CMS.Helper;
 using CMS.Helper.NewFolder;
+using CMS.Helper.SharedServices;
+using CMS.Helper.UtilsClass;
+using System.Net.WebSockets;
+using System.Runtime.Intrinsics.Arm;
+using IdentityServer.Models;
 
 namespace IdentityServer.Controllers
 {
@@ -15,11 +20,13 @@ namespace IdentityServer.Controllers
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
+        private EmailSenderService _emailSenderService;
 
-        public AuthController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        public AuthController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, EmailSenderService emailSenderService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _emailSenderService = emailSenderService;
         }
 
         [HttpGet]
@@ -44,11 +51,16 @@ namespace IdentityServer.Controllers
             {
                 return Redirect(vm.ReturnUrl);
             }
-            else
+            else if (result.IsNotAllowed) //not confirm email
             {
-
+                IdentityUser user = await _userManager.FindByNameAsync(vm.Username);
+                if (user != null)
+                {
+                    string userEmail = user.Email;
+                    return RedirectToAction(nameof(NotifyConfirmEmail), new { email = userEmail, returnUrl = vm.ReturnUrl });
+                }
             }
-            return View();
+            return View(vm);
         }
 
         [HttpGet]
@@ -61,24 +73,82 @@ namespace IdentityServer.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> ConfirmEmail(NotifyConfirmEmailViewModel nvm)
+        {
+            //get form data using traditional aproach
+            string inputActivationToken = Request.Form["inputActivationToken"].ToString();
+            IdentityUser user = await _userManager.FindByEmailAsync(nvm.Email);
+            if (user != null) { 
+                if (inputActivationToken.Equals(nvm.AccountActivationToken))
+                {
+                    var result = await _userManager.ConfirmEmailAsync(user, nvm.AccountActivationToken);
+                    if (result.Succeeded)
+                    {
+                        await _userManager.AddClaimAsync(user, new Claim(MyClaimType.Role, RoleType.AuthenticatedUser));
+                        await _signInManager.SignInAsync(user, false);
+                        return Redirect(nvm.ReturnUrl);
+                    }
+                }
+                else { //retype input until it match
+                    return View("VerifyActivationTokenMatch", nvm);
+                }
+            }
+            return RedirectToAction(nameof(Register));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> NotifyConfirmEmail(string email, string returnUrl)
+        {
+            return View("NotifyConfirmEmail", new NotifyConfirmEmailViewModel
+            {
+                Email = email,
+                ReturnUrl = returnUrl
+            });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> NotifyConfirmEmail(NotifyConfirmEmailViewModel nvm)
+        {
+            string email = nvm.Email; string returnUrl = nvm.ReturnUrl;
+            IdentityUser user = await _userManager.FindByEmailAsync(email);
+
+            var accountActivationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            MailRequest mailContent = new MailRequest();
+            mailContent.Subject = $"Confirmation email for {user.UserName}";
+            string mailBody = $"Here 's your activation code: <b>{accountActivationToken}</b>";
+            mailContent.ToEmail = user.Email;
+            mailContent.Body = mailBody;
+            bool activationEmailSendingTaskSuccess = await _emailSenderService.SendMail(mailContent);
+            if (activationEmailSendingTaskSuccess == true)
+            {
+                nvm.AccountActivationToken = accountActivationToken;
+                return View("VerifyActivationTokenMatch",nvm);
+                //send email successfully
+            }
+            else
+            {
+                return View(nvm);
+            }
+        }
+
+        [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel rvm)
         {
             if (rvm.Password == rvm.PasswordConfirmed)
             {
                 //phai cos await neu ko se redirect trc khi tao user
-                var user = new IdentityUser(rvm.Username);
+                var user = new IdentityUser {
+                    UserName = rvm.Username,
+                    Email = rvm.Email,
+                };
+
                 var result = await _userManager.CreateAsync(user, rvm.Password);
-                if (result.Succeeded)
-                {
-                    await _userManager.AddClaimAsync(user, new Claim(MyClaimType.Role, RoleType.AuthenticatedUser));
-                    await _signInManager.SignInAsync(user, false);
+                if (result.Succeeded) {
+                    return RedirectToAction(nameof(NotifyConfirmEmail), new { email = rvm.Email, returnUrl = rvm.ReturnUrl });
                 }
-                return Redirect(rvm.ReturnUrl);
+
             }
-            else
-            {
-                return View();
-            }
+            return View();
         }
         public async Task<IActionResult> ExternalLogin(string provider, string returnUrl)
         {
