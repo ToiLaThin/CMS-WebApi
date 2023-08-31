@@ -1,11 +1,12 @@
 ﻿namespace IdentityServer.Models
 {
-    public class ExternalRegisterViewModel
+    public class NotifyConfirmEmailViewModel
     {
-        public string Username { get; set; }
-
         public string ReturnUrl { get; set; }
 
         public string Email { get; set; }
+
+        public string AccountActivationToken { get; set; }
+
     }
 }

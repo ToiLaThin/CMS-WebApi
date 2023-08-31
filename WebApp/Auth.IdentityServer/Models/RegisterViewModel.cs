@@ -9,5 +9,7 @@
         public string PasswordConfirmed { get; set; }
 
         public string ReturnUrl { get; set; }
+
+        public string Email { get; set; }
     }
 }

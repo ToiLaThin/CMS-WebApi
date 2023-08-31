@@ -6,7 +6,7 @@ using CMS.Helper;
 namespace CMS.Post.Api
 {
     using CMS.DataModel;
-    using CMS.Helper.NewFolder;
+    using CMS.Helper.StaticClass;
     using CMS.Post.Service;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Authorization;

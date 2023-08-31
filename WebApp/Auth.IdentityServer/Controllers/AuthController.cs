@@ -1,13 +1,10 @@
-﻿using IdentityServer.Models;
-using Microsoft.AspNetCore.Authorization;
+﻿using CMS.Helper.SharedServices;
+using CMS.Helper.StaticClass;
+using CMS.Helper.UtilsClass;
+using IdentityServer.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using CMS.Helper;
-using CMS.Helper.NewFolder;
 
 namespace IdentityServer.Controllers
 {
@@ -15,11 +12,13 @@ namespace IdentityServer.Controllers
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
+        private EmailSenderService _emailSenderService;
 
-        public AuthController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        public AuthController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, EmailSenderService emailSenderService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _emailSenderService = emailSenderService;
         }
 
         [HttpGet]
@@ -44,11 +43,16 @@ namespace IdentityServer.Controllers
             {
                 return Redirect(vm.ReturnUrl);
             }
-            else
+            else if (result.IsNotAllowed) //not confirm email
             {
-
+                IdentityUser user = await _userManager.FindByNameAsync(vm.Username);
+                if (user != null)
+                {
+                    string userEmail = user.Email;
+                    return RedirectToAction(nameof(NotifyConfirmEmail), new { email = userEmail, returnUrl = vm.ReturnUrl });
+                }
             }
-            return View();
+            return View(vm);
         }
 
         [HttpGet]
@@ -61,24 +65,82 @@ namespace IdentityServer.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> ConfirmEmail(NotifyConfirmEmailViewModel nvm)
+        {
+            //get form data using traditional aproach
+            string inputActivationToken = Request.Form["inputActivationToken"].ToString();
+            IdentityUser user = await _userManager.FindByEmailAsync(nvm.Email);
+            if (user != null) { 
+                if (inputActivationToken.Equals(nvm.AccountActivationToken))
+                {
+                    var result = await _userManager.ConfirmEmailAsync(user, nvm.AccountActivationToken);
+                    if (result.Succeeded)
+                    {
+                        await _userManager.AddClaimAsync(user, new Claim(MyClaimType.Role, RoleType.AuthenticatedUser));
+                        await _signInManager.SignInAsync(user, false);
+                        return Redirect(nvm.ReturnUrl);
+                    }
+                }
+                else { //retype input until it match
+                    return View("VerifyActivationTokenMatch", nvm);
+                }
+            }
+            return RedirectToAction(nameof(Register));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> NotifyConfirmEmail(string email, string returnUrl)
+        {
+            return View("NotifyConfirmEmail", new NotifyConfirmEmailViewModel
+            {
+                Email = email,
+                ReturnUrl = returnUrl
+            });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> NotifyConfirmEmail(NotifyConfirmEmailViewModel nvm)
+        {
+            string email = nvm.Email; string returnUrl = nvm.ReturnUrl;
+            IdentityUser user = await _userManager.FindByEmailAsync(email);
+
+            var accountActivationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            MailRequest mailContent = new MailRequest();
+            mailContent.Subject = $"Confirmation email for {user.UserName}";
+            string mailBody = $"Here 's your activation code: <b>{accountActivationToken}</b>";
+            mailContent.ToEmail = user.Email;
+            mailContent.Body = mailBody;
+            bool activationEmailSendingTaskSuccess = await _emailSenderService.SendMail(mailContent);
+            if (activationEmailSendingTaskSuccess == true)
+            {
+                nvm.AccountActivationToken = accountActivationToken;
+                return View("VerifyActivationTokenMatch",nvm);
+                //send email successfully
+            }
+            else
+            {
+                return View(nvm);
+            }
+        }
+
+        [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel rvm)
         {
             if (rvm.Password == rvm.PasswordConfirmed)
             {
                 //phai cos await neu ko se redirect trc khi tao user
-                var user = new IdentityUser(rvm.Username);
+                var user = new IdentityUser {
+                    UserName = rvm.Username,
+                    Email = rvm.Email,
+                };
+
                 var result = await _userManager.CreateAsync(user, rvm.Password);
-                if (result.Succeeded)
-                {
-                    await _userManager.AddClaimAsync(user, new Claim(MyClaimType.Role, RoleType.AuthenticatedUser));
-                    await _signInManager.SignInAsync(user, false);
+                if (result.Succeeded) {
+                    return RedirectToAction(nameof(NotifyConfirmEmail), new { email = rvm.Email, returnUrl = rvm.ReturnUrl });
                 }
-                return Redirect(rvm.ReturnUrl);
+
             }
-            else
-            {
-                return View();
-            }
+            return View();
         }
         public async Task<IActionResult> ExternalLogin(string provider, string returnUrl)
         {
@@ -95,7 +157,7 @@ namespace IdentityServer.Controllers
             {
                 //if not go to login page again
                 return RedirectToAction("Login");
-            }
+            }            
 
             //else sign in get claims and set to ctx.User and may save those claims to db?
             var result = await _signInManager
@@ -111,10 +173,14 @@ namespace IdentityServer.Controllers
             //else create that facebook user in db using ExternalRegister
             var username = info.Principal.FindFirst(ClaimTypes.Name).Value; //get info.principle.Name represent the face book username
             //cannot modify the claim so we extract the value then modify the value
+            string userExternalEmail = info.Principal.Claims
+                                          .FirstOrDefault(x => x.Type == ClaimTypes.Email).Value;
+            //get user email
             return View("ExternalRegister", new ExternalRegisterViewModel
             {
                 Username = username.Replace(" ", ""),
-                ReturnUrl = returnUrl
+                ReturnUrl = returnUrl,
+                Email = userExternalEmail
             });
         }
 
@@ -127,7 +193,13 @@ namespace IdentityServer.Controllers
                 return RedirectToAction("Login");
             }
 
-            var user = new IdentityUser(vm.Username);
+            var user = new IdentityUser
+            {
+                UserName = vm.Username,
+                Email = vm.Email,
+                EmailConfirmed = true //because email confirmed required to login
+            };
+
             var claimToAdd = new Claim(MyClaimType.Country, "VN");
             var claimToAddToAccessToken = new Claim(MyClaimType.Role, RoleType.Admin);
             var result = await _userManager.CreateAsync(user);

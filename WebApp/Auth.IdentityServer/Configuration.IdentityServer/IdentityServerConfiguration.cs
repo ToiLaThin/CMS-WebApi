@@ -2,7 +2,7 @@
 using IdentityServer4;
 using IdentityServer4.Models;
 using System.Security.Claims;
-using CMS.Helper;
+using CMS.Helper.StaticClass;
 
 namespace IdentityServer
 {

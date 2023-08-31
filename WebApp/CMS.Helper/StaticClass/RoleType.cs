@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CMS.Helper.NewFolder
+namespace CMS.Helper.StaticClass
 {
     public static class RoleType
     {

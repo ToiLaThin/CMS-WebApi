@@ -2,6 +2,7 @@
 
 <form asp-controller="Auth" asp-action="ExternalRegister" method="post">
     <input type="hidden" asp-for="ReturnUrl" />
+    <input type="hidden" asp-for="Email" />
     <div>
         <label>Username</label>
         <input asp-for="Username" />
